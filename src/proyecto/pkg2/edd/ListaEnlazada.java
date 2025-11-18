@@ -20,6 +20,10 @@ public class ListaEnlazada {
     public boolean estaVacia() {
         return cabeza == null;
     }
+    
+    public NodoLista getCabeza() {
+        return this.cabeza;
+    }
 
     public void agregar(Object dato) {
         NodoLista nuevoNodo = new NodoLista();
