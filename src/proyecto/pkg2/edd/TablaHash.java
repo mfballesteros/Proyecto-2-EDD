@@ -5,14 +5,20 @@
 package proyecto.pkg2.edd;
 
 /**
+ *Clase en la que se crea la tabla Hash, crea la tabla como un arreglo de listas 
+ * Usa como valor a la clase Resumen
+ * Se implementan los metodos agregar elementos y buscar elementos 
+ * 
  *
  * @author danie_xe5djpj
  */
+// ATRIBUTOS DE LA CLASE
 public class TablaHash {
     private ListaEnlazada[] tabla; //cada posicion del array es una lista
     private int capacidad;
     private int tamaño;
-
+    
+//CONSTRUCTOR
     public TablaHash(int capacidad) {
         this.tabla = new ListaEnlazada [capacidad];
         this.capacidad = capacidad;

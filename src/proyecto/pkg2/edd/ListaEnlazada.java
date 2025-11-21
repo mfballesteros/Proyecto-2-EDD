@@ -20,6 +20,10 @@ public class ListaEnlazada {
     public boolean estaVacia() {
         return getCabeza() == null;
     }
+    
+    public NodoLista getCabeza() {
+        return this.cabeza;
+    }
 
     public void agregar(Object dato) {
         NodoLista nuevoNodo = new NodoLista();
@@ -92,12 +96,6 @@ public class ListaEnlazada {
         return false;
     }
 
-    /**
-     * @return the cabeza
-     */
-    public NodoLista getCabeza() {
-        return cabeza;
-    }
 
     /**
      * @param cabeza the cabeza to set
