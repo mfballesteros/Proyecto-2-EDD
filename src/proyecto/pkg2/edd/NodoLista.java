@@ -14,7 +14,7 @@ public class NodoLista {
     private NodoLista sig;
 
     public NodoLista() {
-        this.dato = dato;
+        this.dato = null;
         this.sig = null;
     }
     

@@ -18,7 +18,7 @@ public class ListaEnlazada {
     }
 
     public boolean estaVacia() {
-        return cabeza == null;
+        return getCabeza() == null;
     }
 
     public void agregar(Object dato) {
@@ -26,15 +26,15 @@ public class ListaEnlazada {
         nuevoNodo.setDato(dato);
 
         if (this.estaVacia()) {
-            this.cabeza = nuevoNodo;
+            this.setCabeza(nuevoNodo);
         } else {
-            NodoLista actual = this.cabeza;
+            NodoLista actual = this.getCabeza();
             while (actual.getSig() != null) {
                 actual = actual.getSig();
             }
             actual.setSig(nuevoNodo);
         }
-        this.tamano++;
+        this.setTamano(this.getTamano() + 1);
     }
 
     public void recorrer() {
@@ -43,7 +43,7 @@ public class ListaEnlazada {
             return;
         }
 
-        NodoLista actual = this.cabeza;
+        NodoLista actual = this.getCabeza();
         System.out.print("Lista Enlazada: ");
         
         while (actual != null) {
@@ -54,7 +54,7 @@ public class ListaEnlazada {
     }
 
     public boolean buscar(Object datoBuscado) {
-        NodoLista actual = this.cabeza;
+        NodoLista actual = this.getCabeza();
         
         while (actual != null) {
             if (actual.getDato().equals(datoBuscado)) {
@@ -70,13 +70,13 @@ public class ListaEnlazada {
             return false;
         }
 
-        if (this.cabeza.getDato().equals(datoAEliminar)) {
-            this.cabeza = this.cabeza.getSig();
-            this.tamano--;
+        if (this.getCabeza().getDato().equals(datoAEliminar)) {
+            this.setCabeza(this.getCabeza().getSig());
+            this.setTamano(this.getTamano() - 1);
             return true;
         }
 
-        NodoLista actual = this.cabeza;
+        NodoLista actual = this.getCabeza();
         
         while (actual.getSig() != null && !actual.getSig().getDato().equals(datoAEliminar)) {
             actual = actual.getSig();
@@ -85,10 +85,38 @@ public class ListaEnlazada {
         if (actual.getSig() != null) {
             NodoLista nodoAEliminar = actual.getSig();
             actual.setSig(nodoAEliminar.getSig());
-            this.tamano--;
+            this.setTamano(this.getTamano() - 1);
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @return the cabeza
+     */
+    public NodoLista getCabeza() {
+        return cabeza;
+    }
+
+    /**
+     * @param cabeza the cabeza to set
+     */
+    public void setCabeza(NodoLista cabeza) {
+        this.cabeza = cabeza;
+    }
+
+    /**
+     * @return the tamano
+     */
+    public int getTamano() {
+        return tamano;
+    }
+
+    /**
+     * @param tamano the tamano to set
+     */
+    public void setTamano(int tamano) {
+        this.tamano = tamano;
     }
 }
