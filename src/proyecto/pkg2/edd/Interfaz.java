@@ -4,6 +4,11 @@
  */
 package proyecto.pkg2.edd;
 
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  *
  * @author a-utr
@@ -37,6 +42,7 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         btnBuscar = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
         jPanel8 = new javax.swing.JPanel();
         btnAnalizar1 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
@@ -60,6 +66,8 @@ public class Interfaz extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(204, 224, 255));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        btnListar.setFont(new java.awt.Font("Baloo Bhai", 0, 12)); // NOI18N
+        btnListar.setForeground(new java.awt.Color(0, 51, 153));
         btnListar.setText("Listar Palabras Claves");
         jPanel4.add(btnListar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
 
@@ -68,6 +76,8 @@ public class Interfaz extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(204, 224, 255));
         jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        btnAgregar.setFont(new java.awt.Font("Baloo Bhai", 0, 12)); // NOI18N
+        btnAgregar.setForeground(new java.awt.Color(0, 51, 153));
         btnAgregar.setText("Agregar Resumen");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -79,22 +89,29 @@ public class Interfaz extends javax.swing.JFrame {
         jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 200, 50));
 
         jLabel4.setBackground(new java.awt.Color(0, 0, 102));
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("BIENVENIDO");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
+        jLabel4.setFont(new java.awt.Font("Baloo Bhai", 1, 30)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(13, 50, 140));
+        jLabel4.setText("¡ BIENVENIDO !");
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 20, -1, -1));
 
         jPanel7.setBackground(new java.awt.Color(204, 224, 255));
         jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        btnBuscar.setFont(new java.awt.Font("Baloo Bhai", 0, 12)); // NOI18N
+        btnBuscar.setForeground(new java.awt.Color(0, 51, 153));
         btnBuscar.setText("Buscar Investigaciones");
-        jPanel7.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
+        jPanel7.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
         jPanel1.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 200, 50));
+
+        jSeparator2.setForeground(new java.awt.Color(0, 51, 153));
+        jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 690, 20));
 
         jPanel8.setBackground(new java.awt.Color(204, 224, 255));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        btnAnalizar1.setFont(new java.awt.Font("Baloo Bhai", 0, 12)); // NOI18N
+        btnAnalizar1.setForeground(new java.awt.Color(0, 51, 153));
         btnAnalizar1.setText("Analizar Resumen");
         jPanel8.add(btnAnalizar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, -1, -1));
 
@@ -109,7 +126,20 @@ public class Interfaz extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Seleccionar Archivo de Resumen");       
+        FileNameExtensionFilter filtroTexto = new FileNameExtensionFilter("Archivos de Texto (*.txt)", "txt");
+        fileChooser.setFileFilter(filtroTexto);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        int resultado = fileChooser.showOpenDialog(null); 
+
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File archivoSeleccionado = fileChooser.getSelectedFile();
+            
+            // Llamar a la función que procesa el archivo y almacena
+           // procesarYGuardarResumen(archivoSeleccionado);
+        } 
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     /**
@@ -161,6 +191,7 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }
