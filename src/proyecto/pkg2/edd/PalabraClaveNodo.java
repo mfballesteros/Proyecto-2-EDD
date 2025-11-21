@@ -71,6 +71,7 @@ public class PalabraClaveNodo {
         ArticuloFrecuencia nuevaFrecuencia = new ArticuloFrecuencia(claveResumen);
         this.articulosFrecuenciaList.agregar(nuevaFrecuencia);
     }
+    
 }
     
     
