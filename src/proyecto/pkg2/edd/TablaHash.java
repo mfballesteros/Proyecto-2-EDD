@@ -73,9 +73,15 @@ public class TablaHash {
     
     
     
-    public void AgregarElem (Resumen resumen) {
+    public boolean AgregarElem (Resumen resumen) {
+        if (BuscarElem(resumen.getTitulo()) != null) {
+            return false;
+    }
         int indice = resumen.obtenerHash() % capacidad;
+        if (indice < 0) indice *= -1;
         tabla[indice].agregar(resumen);
+        tamaño++;
+        return true;
     }
 
     
@@ -112,6 +118,23 @@ public class TablaHash {
                 return false;
         }
         return true;
+    }
+    
+    public String[] obtenerTitulos() {
+        java.util.ArrayList<String> listaTitulos = new java.util.ArrayList<>();
+
+        for (int i = 0; i < this.capacidad; i++) {
+            NodoLista actual = this.tabla[i].getCabeza(); 
+
+            while (actual != null) {
+             
+                Resumen r = (Resumen) actual.getDato(); 
+                listaTitulos.add(r.getTitulo());
+                
+                actual = actual.getSig(); 
+            }
+        }
+        return listaTitulos.toArray(new String[0]);
     }
 }
     
