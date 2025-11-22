@@ -117,4 +117,19 @@ public class ListaEnlazada {
     public void setTamano(int tamano) {
         this.tamano = tamano;
     }
+    
+    public String generarReporteFrecuencias() {
+    StringBuilder sb = new StringBuilder();
+    NodoLista actual = this.cabeza;
+    
+    while (actual != null) {
+        if (actual.getDato() instanceof ArticuloFrecuencia) {
+            ArticuloFrecuencia af = (ArticuloFrecuencia) actual.getDato();
+            sb.append(" • Doc: ").append(af.getClaveResumen())
+              .append(" (").append(af.getFrecuencia()).append(" veces)\n");
+        }
+        actual = actual.getSig();
+    }
+    return sb.toString();
+}
 }

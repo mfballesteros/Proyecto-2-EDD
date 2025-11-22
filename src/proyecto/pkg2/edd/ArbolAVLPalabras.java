@@ -154,4 +154,48 @@ public class ArbolAVLPalabras {
             System.out.print(nodo.getPalabraClave() + " ");
         }
     }
+    
+    public ListaEnlazada obtenerListaOrdenada() {
+
+    ListaEnlazada listaRetorno = new ListaEnlazada();
+    llenarListaInOrder(this.raiz, listaRetorno);
+    return listaRetorno;
+}
+
+private void llenarListaInOrder(PalabraClaveNodo nodo, ListaEnlazada lista) {
+    if (nodo != null) {
+        llenarListaInOrder(nodo.getHijoIzquierdo(), lista);
+        lista.agregar(nodo); 
+        llenarListaInOrder(nodo.getHijoDerecho(), lista);
+    }
+  }
+
+public void fijarFrecuenciaEnCero(String palabra, String tituloResumen) {
+        PalabraClaveNodo nodo = buscarNodo(this.raiz, palabra);
+        
+        if (nodo != null) {
+            NodoLista aux = nodo.getArticulosFrecuenciaList().getCabeza();
+            while (aux != null) {
+                ArticuloFrecuencia af = (ArticuloFrecuencia) aux.getDato();
+
+                if (af.getClaveResumen().equals(tituloResumen)) {
+                    af.setFrecuencia(0);
+                    return; 
+                }
+                aux = aux.getSig();
+            }
+        }
+    }
+
+    private PalabraClaveNodo buscarNodo(PalabraClaveNodo actual, String palabra) {
+        if (actual == null) return null;
+        
+        int comparacion = this.comparadorEspanol.compare(palabra, actual.getPalabraClave());
+        
+        if (comparacion == 0) return actual;
+        
+        return (comparacion < 0) 
+            ? buscarNodo(actual.getHijoIzquierdo(), palabra) 
+            : buscarNodo(actual.getHijoDerecho(), palabra);
+    }
 }

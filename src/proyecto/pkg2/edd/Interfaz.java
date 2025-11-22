@@ -5,8 +5,11 @@
 package proyecto.pkg2.edd;
 
 import java.io.File;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -14,6 +17,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author a-utr
  */
 public class Interfaz extends javax.swing.JFrame {
+
+    TablaHash tabla = new TablaHash(101);
+    ArbolAVLPalabras arbolAVL = new ArbolAVLPalabras();
 
     /**
      * Creates new form Interfaz
@@ -69,6 +75,11 @@ public class Interfaz extends javax.swing.JFrame {
         btnListar.setFont(new java.awt.Font("Baloo Bhai", 0, 12)); // NOI18N
         btnListar.setForeground(new java.awt.Color(0, 51, 153));
         btnListar.setText("Listar Palabras Claves");
+        btnListar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnListarActionPerformed(evt);
+            }
+        });
         jPanel4.add(btnListar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 200, 50));
@@ -100,6 +111,11 @@ public class Interfaz extends javax.swing.JFrame {
         btnBuscar.setFont(new java.awt.Font("Baloo Bhai", 0, 12)); // NOI18N
         btnBuscar.setForeground(new java.awt.Color(0, 51, 153));
         btnBuscar.setText("Buscar Investigaciones");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
         jPanel7.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
         jPanel1.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 200, 50));
@@ -113,6 +129,11 @@ public class Interfaz extends javax.swing.JFrame {
         btnAnalizar1.setFont(new java.awt.Font("Baloo Bhai", 0, 12)); // NOI18N
         btnAnalizar1.setForeground(new java.awt.Color(0, 51, 153));
         btnAnalizar1.setText("Analizar Resumen");
+        btnAnalizar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnalizar1ActionPerformed(evt);
+            }
+        });
         jPanel8.add(btnAnalizar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, -1, -1));
 
         jPanel1.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 200, 50));
@@ -132,15 +153,214 @@ public class Interfaz extends javax.swing.JFrame {
         fileChooser.setFileFilter(filtroTexto);
         fileChooser.setAcceptAllFileFilterUsed(false);
 
-        int resultado = fileChooser.showOpenDialog(null); 
+        int resultado = fileChooser.showOpenDialog(this); 
 
         if (resultado == JFileChooser.APPROVE_OPTION) {
             File archivoSeleccionado = fileChooser.getSelectedFile();
             
-            // Llamar a la función que procesa el archivo y almacena
-           // procesarYGuardarResumen(archivoSeleccionado);
-        } 
+        try {
+            java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(archivoSeleccionado));
+            String linea;
+
+            String titulo = "";
+            String autores = "";
+            String resumenCuerpo = "";
+            String palabrasClaves = "";
+
+            int seccionActual = 0; 
+
+            while ((linea = br.readLine()) != null) {
+                linea = linea.trim(); 
+                
+                if (linea.isEmpty()) continue; 
+                if (linea.equalsIgnoreCase("Autores")) {
+                    seccionActual = 1;
+                    continue; 
+                }
+                
+                if (linea.equalsIgnoreCase("Resumen")) {
+                    seccionActual = 2;
+                    continue; 
+                }
+                if (linea.toLowerCase().startsWith("palabras claves")) {
+                    if (linea.contains(":")) {
+                        palabrasClaves = linea.substring(linea.indexOf(":") + 1).trim();
+                    }
+                    continue; 
+                }
+
+                switch (seccionActual) {
+                    case 0: 
+                        titulo += linea + " "; 
+                        break;
+                    case 1: 
+                        autores += linea + "\n"; 
+                        break;
+                    case 2:
+                        resumenCuerpo += linea + " ";
+                        break;
+                }
+            }
+            br.close();
+
+            titulo = titulo.trim();
+            autores = autores.trim();
+            resumenCuerpo = resumenCuerpo.trim();
+
+            if (!titulo.isEmpty()) {
+
+                Resumen nuevoResumen = new Resumen(titulo, autores, resumenCuerpo, palabrasClaves);
+
+                boolean guardado = tabla.AgregarElem(nuevoResumen);
+                
+                if (guardado) {
+if (palabrasClaves != null && !palabrasClaves.isEmpty()) {
+        
+        if (palabrasClaves.endsWith(".")) {
+            palabrasClaves = palabrasClaves.substring(0, palabrasClaves.length() - 1);
+        }
+
+        String[] listaFrases = palabrasClaves.split(",");
+        String cuerpoParaBuscar = resumenCuerpo.toLowerCase();
+
+        for (String frase : listaFrases) {
+
+            String fraseProcesada = frase.trim().toLowerCase();
+            fraseProcesada = fraseProcesada.replaceAll("[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\\-\\s#\\+]", "");
+            
+            if (fraseProcesada.length() > 1) {
+
+                int contador = 0;
+                int indice = cuerpoParaBuscar.indexOf(fraseProcesada);
+                while (indice != -1) {
+                    contador++;
+                    indice = cuerpoParaBuscar.indexOf(fraseProcesada, indice + 1);
+                }
+
+                if (contador > 0) {
+
+                    for (int i = 0; i < contador; i++) {
+                        arbolAVL.insertarOActualizar(fraseProcesada, titulo);
+                    }
+                } else {
+
+                    arbolAVL.insertarOActualizar(fraseProcesada, titulo);
+
+                    arbolAVL.fijarFrecuenciaEnCero(fraseProcesada, titulo);
+                }
+            }
+        }
+    }
+                    javax.swing.JOptionPane.showMessageDialog(this, "¡Resumen cargado exitosamente!\nTítulo: " + titulo);
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error: Ese resumen ya existe en la base de datos.");
+                }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error: No se pudo identificar el título del resumen.");
+            }
+            
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al leer el archivo: " + e.getMessage());
+        }
+       }
+       
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void btnAnalizar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizar1ActionPerformed
+    String[] titulos = tabla.obtenerTitulos();
+    
+    if (titulos.length == 0) {
+        javax.swing.JOptionPane.showMessageDialog(this, "No hay investigaciones guardadas");
+        return;
+    }
+
+    java.util.Arrays.sort(titulos);
+
+    String tituloSeleccionado = (String) javax.swing.JOptionPane.showInputDialog(
+            this, 
+            "Seleccione una investigación para analizar:", 
+            "Analizar Resumen", 
+            javax.swing.JOptionPane.QUESTION_MESSAGE, 
+            null, 
+            titulos, 
+            titulos[0]);
+
+    if (tituloSeleccionado == null) return;
+
+    Resumen resumen = tabla.BuscarElem(tituloSeleccionado);
+    
+    if (resumen != null) {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("Nombre del trabajo:\n").append(resumen.getTitulo()).append("\n\n");
+        
+        sb.append("Autores:\n").append(resumen.getAutores()).append("\n\n");
+        
+        sb.append("Palabras clave:\n");
+        String[] listaClaves = resumen.getPclaves().split("[,\\n]");
+
+        for (String palabra : listaClaves) {
+            String palabraLimpia = palabra.trim();
+            
+            if (!palabraLimpia.isEmpty()) {
+                int frecuencia = contarFrecuencia(resumen.getResumen(), palabraLimpia);
+                
+                sb.append("• ").append(palabraLimpia)
+                  .append(": ").append(frecuencia).append("\n");
+            }
+        }
+        jTextArea1.setText(sb.toString());
+        
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: No se pudo recuperar la información del resumen.");
+    }
+    }//GEN-LAST:event_btnAnalizar1ActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
+ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
+
+    if (listaDeNodos.getCabeza() == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "El árbol está vacío. Agregue resúmenes primero");
+        return;
+    }
+
+    java.util.ArrayList<String> listaNombres = new java.util.ArrayList<>();
+    java.util.ArrayList<PalabraClaveNodo> listaObjetos = new java.util.ArrayList<>();
+
+    NodoLista actual = listaDeNodos.getCabeza();
+    while (actual != null) {
+        PalabraClaveNodo nodo = (PalabraClaveNodo) actual.getDato();
+        
+        listaNombres.add(nodo.getPalabraClave()); 
+        listaObjetos.add(nodo);                 
+        
+        actual = actual.getSig();
+    }
+
+    Object[] opciones = listaNombres.toArray();
+
+    String seleccion = (String) javax.swing.JOptionPane.showInputDialog(
+            this,
+            "Seleccione una palabra para ver sus detalles:",
+            "Palabras Claves",
+            javax.swing.JOptionPane.PLAIN_MESSAGE,
+            null,
+            opciones,          
+            opciones[0]         
+    );
+
+    if (seleccion != null) {
+
+        int indice = listaNombres.indexOf(seleccion);
+        PalabraClaveNodo nodoElegido = listaObjetos.get(indice);
+
+        mostrarDetalles(nodoElegido);
+     }
+    }//GEN-LAST:event_btnListarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -176,6 +396,53 @@ public class Interfaz extends javax.swing.JFrame {
             }
         });
     }
+    
+    private int contarFrecuencia(String textoCompleto, String palabraBuscada) {
+        if (textoCompleto == null || palabraBuscada == null) return 0;
+
+        String textoBajo = textoCompleto.toLowerCase();
+        String palabraBaja = palabraBuscada.toLowerCase().trim();
+
+        String[] palabrasDelTexto = textoBajo.split("\\W+");
+        
+        int contador = 0;
+        for (String palabra : palabrasDelTexto) {
+            if (palabra.equals(palabraBaja)) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+    
+    private void mostrarDetalles(PalabraClaveNodo nodo) {
+    if (nodo == null) return;
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("Palabra Clave: ").append(nodo.getPalabraClave()).append("\n");
+    sb.append("--------------------------------------------\n");
+
+    ListaEnlazada listaFrecuencias = nodo.getArticulosFrecuenciaList();
+    
+    if (listaFrecuencias != null) {
+        NodoLista actual = listaFrecuencias.getCabeza();
+        int total = 0;
+
+        while (actual != null) {
+            if (actual.getDato() instanceof ArticuloFrecuencia) {
+                ArticuloFrecuencia af = (ArticuloFrecuencia) actual.getDato();
+                sb.append(" • Resumen: ").append(af.getClaveResumen())
+                  .append("  |  Cant: ").append(af.getFrecuencia()).append("\n");
+                total += af.getFrecuencia();
+            }
+            actual = actual.getSig();
+        }
+        sb.append("\nTOTAL APARICIONES: ").append(total);
+    } else {
+        sb.append("No hay datos de frecuencia.");
+    }
+
+    javax.swing.JOptionPane.showMessageDialog(this, sb.toString(), "Detalles de Palabra", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
