@@ -136,6 +136,56 @@ public class TablaHash {
         }
         return listaTitulos.toArray(new String[0]);
     }
+    private class Entrada {
+    String clave;
+    Object valor; // Aquí guardaremos la ListaEnlazada de títulos
+
+    public Entrada(String clave, Object valor) {
+        this.clave = clave;
+        this.valor = valor;
+        }
+    }
+    private int obtenerHashString(String texto) {
+    int hash = 0;
+    // Algoritmo estándar (x31) para dispersar bien las letras
+    for (int i = 0; i < texto.length(); i++) {
+        hash = (31 * hash + texto.charAt(i)) % capacidad;
+    }
+    if (hash < 0) hash *= -1; // Evitamos negativos
+    return hash;
+    }
+    public void insertar(String clave, Object valor) {
+    int indice = obtenerHashString(clave);
+    
+    // Envolvemos los datos en la clase Entrada para no perder la clave
+    Entrada nuevaEntrada = new Entrada(clave, valor);
+    
+    // Usamos tu método existente .agregar() de la lista enlazada
+    tabla[indice].agregar(nuevaEntrada);
+    }
+    public Object buscar(String claveBuscada) {
+    int indice = obtenerHashString(claveBuscada);
+    
+    // Obtenemos la cabeza de la lista en esa posición
+    NodoLista actual = tabla[indice].getCabeza();
+
+    // Recorremos la lista por si hubo colisiones
+    while (actual != null) {
+        Object dato = actual.getDato();
+        
+        // Verificamos si lo que hay ahí es una de nuestras Entradas
+        if (dato instanceof Entrada) {
+            Entrada e = (Entrada) dato;
+            // Comparamos si es la palabra que buscamos
+            if (e.clave.equalsIgnoreCase(claveBuscada)) {
+                return e.valor; // ¡Encontrado! Devolvemos la lista de títulos
+            }
+        }
+        actual = actual.getSig();
+     }
+    return null; // No existe esa palabra
+    }
+    
 }
     
     
