@@ -28,42 +28,43 @@ public class TablaHash {
         }
     }
 
-    /**
+    /** obtiene el arreglo de listas enlazadas
      * @return the tabla
      */
     public ListaEnlazada[] getTabla() {
         return tabla;
     }
 
-    /**
-     * @param tabla the tabla to set
+/**
+     * Modifica el arreglo de la tabla
+     * @param tabla El nuevo arreglo de ListasEnlazada a establecer.
      */
     public void setTabla(ListaEnlazada[] tabla) {
         this.tabla = tabla;
     }
 
-    /**
+    /** Obtiene la capacidad del arreglo de la tabla
      * @return the capacidad
      */
     public int getCapacidad() {
         return capacidad;
     }
 
-    /**
+    /** Modifica la capacidad del arreglo de la tabla
      * @param capacidad the capacidad to set
      */
     public void setCapacidad(int capacidad) {
         this.capacidad = capacidad;
     }
 
-    /**
+    /** arroja el numero de elementos en la tabla almacenados
      * @return the tamaño
      */
     public int getTamaño() {
         return tamaño;
     }
 
-    /**
+    /** Modifica el contador de elementos almacenados
      * @param tamaño the tamaño to set
      */
     public void setTamaño(int tamaño) {
@@ -71,8 +72,13 @@ public class TablaHash {
     }
     
     
-    
-    
+/**
+     * Agrega un objeto (Resumen) a la tabla hash principal
+     * Utiliza el título del resumen para calcular el indice hash
+     * @param resumen El objeto Resumen a insertar.
+     * @return true si el resumen fue agregado exitosamente (no era duplicado), false en caso contrario.
+     */    
+
     public boolean AgregarElem (Resumen resumen) {
         if (BuscarElem(resumen.getTitulo()) != null) {
             return false;
@@ -83,8 +89,11 @@ public class TablaHash {
         tamaño++;
         return true;
     }
-
-    
+/**
+     * Busca un (Resumen)en la tabla hash utilizando su titulo.
+     * @param titulo El título del resumen a buscar
+     * @return El objeto Resumen encontrado, o null si no se encuentra
+     */
     
     public Resumen BuscarElem (String titulo) {
         Resumen temp = new Resumen(titulo, "", "", "");
@@ -103,7 +112,12 @@ public class TablaHash {
         return null;
     }
 
-    
+/**
+     * Método para realizar una comparación de dos titulos
+     * @param titulo1 El primer titulo.
+     * @param titulo2 El segundo titulo.
+     * @return true si los titulos son iguales, false caso contrario
+     */    
     
     private boolean compararTitulos(String titulo1, String titulo2) {
         if (titulo1 == null && titulo2 == null) 
@@ -119,6 +133,10 @@ public class TablaHash {
         }
         return true;
     }
+ /**
+     * Recorre la Hash Table y extrae todos los títulos de los resumenes almacenados
+     * @return Un arreglo de Strings que contiene todos los titulos de los resumenes.
+     */
     
     public String[] obtenerTitulos() {
         java.util.ArrayList<String> listaTitulos = new java.util.ArrayList<>();
@@ -136,15 +154,28 @@ public class TablaHash {
         }
         return listaTitulos.toArray(new String[0]);
     }
+    
+/**
+     * Clase utilizada para almacenar pares clave-valor dentro de la Tabla Hash
+     */   
+    
     private class Entrada {
     String clave;
     Object valor; // Aquí guardaremos la ListaEnlazada de títulos
-
+//CONSTRUCTOR
     public Entrada(String clave, Object valor) {
         this.clave = clave;
         this.valor = valor;
         }
     }
+    
+/**
+     * Calcula el índice hash para una cadena de texto 
+     * Utiliza un algoritmo de hash y aplica el modulo de la capacidad de la tabla.
+     * @param texto La CLAVE
+     * @return El índice (posición) dentro del arreglo de la tabla.
+     */
+    
     private int obtenerHashString(String texto) {
     int hash = 0;
     // Algoritmo estándar (x31) para dispersar bien las letras
@@ -154,6 +185,14 @@ public class TablaHash {
     if (hash < 0) hash *= -1; // Evitamos negativos
     return hash;
     }
+    
+/**
+     * Inserta una entrada (clave-valor) en la tabla hash. 
+     * En caso de colisión, se agrega al final de la lista enlazada en ese indice.
+     * @param clave La clave a insertar
+     * @param valor El valor asociado a la clave 
+     */   
+    
     public void insertar(String clave, Object valor) {
     int indice = obtenerHashString(clave);
     
@@ -163,6 +202,14 @@ public class TablaHash {
     // Usamos tu método existente .agregar() de la lista enlazada
     tabla[indice].agregar(nuevaEntrada);
     }
+
+/**
+     * Busca el valor asociado a una clave específica en la tabla 
+     * Recorre la Lista Enlazada en la posición hash calculada 
+     * @param claveBuscada La clave a buscar
+     * @return El objeto valor asociado a la clave 
+     */
+    
     public Object buscar(String claveBuscada) {
     int indice = obtenerHashString(claveBuscada);
     
@@ -176,14 +223,13 @@ public class TablaHash {
         // Verificamos si lo que hay ahí es una de nuestras Entradas
         if (dato instanceof Entrada) {
             Entrada e = (Entrada) dato;
-            // Comparamos si es la palabra que buscamos
             if (e.clave.equalsIgnoreCase(claveBuscada)) {
-                return e.valor; // ¡Encontrado! Devolvemos la lista de títulos
+                return e.valor; // devolver lista
             }
         }
         actual = actual.getSig();
      }
-    return null; // No existe esa palabra
+    return null;
     }
     
 }

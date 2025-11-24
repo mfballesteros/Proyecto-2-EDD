@@ -11,12 +11,14 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-/**
- *
+/** Interfaz Gráfica de Usuario principal que maneja articulos cientificos. 
+ * * Maneja procesos de interfaz y estructuras de datos como Hash Table y Arboles AVL
+ * para agregar, buscar y analizar resumenes y palabras clave y autores
  * @author a-utr
  */
-public class Interfaz extends javax.swing.JFrame {
 
+public class Interfaz extends javax.swing.JFrame {
+    
     TablaHash tabla = new TablaHash(101);
     TablaHash tablaPalabrasClave = new TablaHash(100); 
     ArbolAVLPalabras arbolAVL = new ArbolAVLPalabras();
@@ -163,7 +165,13 @@ public class Interfaz extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+/**
+     * Boton "Agregar Resumen"
+     * * Abre un JFileChooser para seleccionar un archivo de texto 
+     *  con (Título, Autores, Resumen, Palabras Clave), crea un objeto  
+     * inserta en las estructuras de datos, Hash Table y Arbol AVL de autores y de palabras 
+     * * @param evt El evento de acción
+     */
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Seleccionar Archivo de Resumen");       
@@ -306,7 +314,13 @@ public class Interfaz extends javax.swing.JFrame {
        }
        
     }//GEN-LAST:event_btnAgregarActionPerformed
-
+/**
+     * Maneja el evento del botón "Analizar Resumen".
+     * * Muestra un menú desplegable con todos los títulos de resumenes guardados 
+     * (obtenidos desde la Tabla Hash) y, al seleccionar uno, llama a 
+     *  DetallesResumen para mostrar su información 
+     * * @param evt El evento de acción.
+     */
     private void btnAnalizar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizar1ActionPerformed
 String[] titulos = tabla.obtenerTitulos();
     
@@ -330,7 +344,13 @@ String[] titulos = tabla.obtenerTitulos();
         DetallesResumen(tituloSeleccionado);
     }
     }//GEN-LAST:event_btnAnalizar1ActionPerformed
-
+/**
+     * Maneja el evento del botón "Buscar por Palabra Clave"
+     * * pide una palabra clave, busca los títulos asociados en 
+     *  tablaPalabrasClave y selecciona un resumen para ver sus detalles 
+     * a través de DetallesResumen
+     * * @param evt El evento de acción.
+     */
     private void btnBuscarPalabraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarPalabraActionPerformed
         String palabraBuscada = javax.swing.JOptionPane.showInputDialog(
             this, 
@@ -386,7 +406,13 @@ String[] titulos = tabla.obtenerTitulos();
         javax.swing.JOptionPane.showMessageDialog(this, "No se encontraron investigaciones con la palabra clave: " + palabraBuscada);
     }
     }//GEN-LAST:event_btnBuscarPalabraActionPerformed
-
+/**
+     * Maneja el evento del botón "Listar Palabras Claves".
+     * * arroja lista ordenada de todas las palabras clave 
+     * permite al usuario seleccionar una y llama a mostrarDetalles
+     * para visualizar su frecuencia
+     * * @param evt El evento de acción.
+     */
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
 ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
 
@@ -428,7 +454,13 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
         mostrarDetalles(nodoElegido);
      }
     }//GEN-LAST:event_btnListarActionPerformed
-
+/**
+     * Maneja el evento del botón "Buscar por Autor".
+     * * arroja una lista ordenada de autores 
+     * permite escoger un autor y muestra una lista de los trabajos asociados 
+     * Al seleccionar un trabajo, llama a DetallesResumen
+     * * @param evt El evento de acción.
+     */
     private void btnBuscarAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarAutorActionPerformed
         String[] listaAutores = arbolAVLa.obtenerAutoresOrdenados(); 
 
@@ -519,6 +551,12 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
             }
         });
     }
+    /**
+     * Muestra la información de un resumen en el text area.
+     * * Busca el resumen por su título en la tabla y muestra el título, 
+     * autores y la frecuencia de cada palabra clave en el resumen 
+     * * @param tituloBuscado El título del resumen a buscar y mostrar.
+     */
     
     private void DetallesResumen(String tituloBuscado) {
     if (tituloBuscado == null) return;
@@ -551,6 +589,13 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
         javax.swing.JOptionPane.showMessageDialog(this, "Error: No se pudo recuperar la información del resumen.");
     }
 }
+    /**
+     * Cuenta la cantidad de veces que aparece una palabra clave dentro del resumen
+     * * limpia el texto completo y la palabra clave 
+     * * @param textoCompleto El texto del resumen.
+     * @param palabraOriginal La palabra clave a buscar.
+     * @return El número de veces que la palabra clave aparece en el texto, su frecuencia
+     */
     
     private int contarFrecuencia(String textoCompleto, String palabraOriginal) {
     if (textoCompleto == null || palabraOriginal == null) return 0;
@@ -570,7 +615,13 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
     
     return contador;
     }
-    
+    /**
+     * limpia y estandariza el nombre del autor
+     * * Elimina guiones, saltos de línea y espacios
+     * Deja el nombre limpio para poder utilizarse con insertar y buscar
+     * * @param nombre El nombre del autor a limpiar
+     * @return El nombre del autor "limpio"
+     */
     private String normalizarNombre(String nombre) {
     if (nombre == null) return "";
 
@@ -581,6 +632,11 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
     
     return limpio;
 }
+    /**
+     * Muestra en una ventana (JOptionPane) los detalles de un nodo de palabra clave.
+     * * Ve la palabra clave, el listado de resúmenes donde aparece y su frecuencia
+     * * @param nodo PalabraClaveNodo que contiene la información de frecuencia
+     */
     
     private void mostrarDetalles(PalabraClaveNodo nodo) {
     if (nodo == null) return;

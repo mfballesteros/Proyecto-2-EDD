@@ -6,18 +6,26 @@ package proyecto.pkg2.edd;
 
 import java.util.ArrayList;
 
-/**
- *
+/** Implementacion de arbol AVL que guarda y maneja los autores de las investigaciones
+ *Cada nodo almacena el nombre del autor, si existe se agrega a una lista 
+ * Este arbol se mantiene balanceado automaticamente
  * @author bettinacarnevali
  */
+
 public class ArbolAVLAutores {
     private AutorNodo raiz;
-
+    
+//CONSTRUCTOR 
     public ArbolAVLAutores() {
         this.raiz = null;
     }
 
-    // --- 1. MÉTODO PÚBLICO PARA INSERTAR ---
+
+ /** Inserta un nuevo autor y su investigacion respectiva
+ ** @param nombreAutor nombre del Autor a insertar
+ * @param tituloInvestigacion titulo de la investigacion del autor
+ */
+    
     public void insertarAutor(String nombreAutor, String tituloInvestigacion) {
         raiz = insertar(raiz, nombreAutor, tituloInvestigacion);
     }
@@ -83,7 +91,11 @@ if (nombre != null) {
 
     // --- 3. MÉTODOS DE BÚSQUEDA (O(log n)) ---
     
-    // Devuelve la lista de títulos de un autor específico
+ /** Arroja la lista de investigaciones del autor buscado 
+ ** @param nombreAutor nombre del Autor a buscar
+ * @return ListaEnlazada con los títulos de investigación del autor
+ */
+    
     public ListaEnlazada buscarInvestigacionesDe(String nombreAutor) {
         AutorNodo nodo = buscarNodo(raiz, nombreAutor);
         if (nodo != null) {
@@ -104,6 +116,11 @@ if (nombre != null) {
     }
 
     // --- 4. MÉTODO PARA LISTADO ALFABÉTICO (RECORRIDO IN-ORDER) ---
+    
+ /** Arroja arreglo de strings con los autores ordenados alfabeticamente (inorden) 
+ ** @return Un arreglo de strings con nombres de autores
+ */
+        
     
     public String[] obtenerAutoresOrdenados() {
         ArrayList<String> listaNombres = new ArrayList<>();
