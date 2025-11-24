@@ -6,14 +6,17 @@ package proyecto.pkg2.edd;
 
 import java.text.Collator; // Necesario para la comparación en español
 import java.util.Locale;   // Necesario para especificar el idioma (es, ES)
-/**
- *
+
+/**Implementacion de arbol AVL para guardar y usar palabras claves dentro de repo de articulos
+ * Los nodos almacenan la frecuencia de cada palabra clave por artículo, actualizando la frecuencia
+ * si la palabra ya existe.
  * @author bettinacarnevali
  */
 public class ArbolAVLPalabras {
     PalabraClaveNodo raiz;
     private final Collator comparadorEspanol;
     
+    //CONSTRUCTOR
     public ArbolAVLPalabras() {
         this.raiz = null;
         this.comparadorEspanol = Collator.getInstance(new Locale("es", "ES"));
@@ -23,6 +26,15 @@ public class ArbolAVLPalabras {
     private int obtenerAltura(PalabraClaveNodo nodo) {
         return (nodo == null) ? 0 : nodo.getAltura();
     }
+    
+    
+/**
+     * Inserta una nueva palabra clave en el árbol o actualiza su frecuencia
+     * *.
+     * * @param palabra La palabra clave a insertar o actualizar
+     * @param claveResumen La clave Unica del resumen o articulo al que pertenece la palabra
+     */
+
     
     public void insertarOActualizar(String palabra, String claveResumen) {
         this.raiz = insertarRecursivo(this.raiz, palabra, claveResumen);
@@ -111,19 +123,34 @@ public class ArbolAVLPalabras {
         }
         return actual;
     }
-    // Métodos públicos para iniciar los recorridos desde la raíz
+    
+// Métodos públicos para iniciar los recorridos desde la raíz
+    /**
+     * Realiza un recorrido Preorden (R, H Izquierdo,H Derecho) sobre el árbol 
+     * imprime las palabras clave en la consola
+     */
+
     public void recorrerPreorden() {
         System.out.print("Preorden: ");
         recorrerPreordenRecursivo(this.raiz);
         System.out.println();
     }
-
+    
+    /**
+     * Realiza un recorrido Inorden ( H Izquierdo, R, H Derecho) sobre el árbol 
+     * imprime las palabras clave en la consola, Este se muestra en orden alfabetico
+     */
     public void recorrerInorden() {
         System.out.print("Inorden: ");
         recorrerInordenRecursivo(this.raiz);
         System.out.println();
     }
-
+    
+    /**
+     * Realiza un recorrido Postorden ( H Izquierdo,H Derecho, R) sobre el árbol 
+     * imprime las palabras clave en la consola
+     */
+    
     public void recorrerPostorden() {
         System.out.print("Postorden: ");
         recorrerPostordenRecursivo(this.raiz);
@@ -155,6 +182,12 @@ public class ArbolAVLPalabras {
         }
     }
     
+/**
+     * Crea y arroja ListaEnlazada que contiene todos los nodos 
+     *  toma la PalabraClaveNodo del árbol, ordenados alfabéticamente (recorrido Inorden).
+     * * @return Una ListaEnlazada con los nodos en orden alfabético
+     */    
+    
     public ListaEnlazada obtenerListaOrdenada() {
 
     ListaEnlazada listaRetorno = new ListaEnlazada();
@@ -169,6 +202,12 @@ private void llenarListaInOrder(PalabraClaveNodo nodo, ListaEnlazada lista) {
         llenarListaInOrder(nodo.getHijoDerecho(), lista);
     }
   }
+
+/**
+     * Busca la palabra clave y el articulo y fija su frecuencia en cero. 
+     * * @param palabra La palabra clave cuyo contador se debe modificar
+     * @param tituloResumen La clave del resumen o artículo que contiene la palabra
+     */
 
 public void fijarFrecuenciaEnCero(String palabra, String tituloResumen) {
         PalabraClaveNodo nodo = buscarNodo(this.raiz, palabra);
