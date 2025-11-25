@@ -18,8 +18,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 
 public class Interfaz extends javax.swing.JFrame {
-    
-    TablaHash tabla = new TablaHash(101);
+    private TablaHash repositorio; // La única tabla principal.
+    private final String ARCHIVO_REPOSITORIO = "resumenes.dat";
+    private final int CAPACIDAD_INICIAL = 1000;
     TablaHash tablaPalabrasClave = new TablaHash(100); 
     ArbolAVLPalabras arbolAVL = new ArbolAVLPalabras();
     ArbolAVLAutores arbolAVLa = new ArbolAVLAutores();
@@ -29,6 +30,10 @@ public class Interfaz extends javax.swing.JFrame {
      */
     public Interfaz() {
         initComponents();
+        this.repositorio = TablaHash.cargarTabla(ARCHIVO_REPOSITORIO, CAPACIDAD_INICIAL);
+        if (this.repositorio != null) {
+        reconstruirIndices(); // Reconstruye los AVL y la Hash Table de búsqueda
+    }
     }
 
     /**
@@ -56,7 +61,9 @@ public class Interfaz extends javax.swing.JFrame {
         btnAnalizar1 = new javax.swing.JButton();
         jPanel9 = new javax.swing.JPanel();
         btnBuscarAutor = new javax.swing.JButton();
+        SaliryGuardar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -158,8 +165,21 @@ public class Interfaz extends javax.swing.JFrame {
 
         jPanel1.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 200, 50));
 
+        SaliryGuardar.setBackground(new java.awt.Color(102, 204, 255));
+        SaliryGuardar.setFont(new java.awt.Font("Castellar", 1, 14)); // NOI18N
+        SaliryGuardar.setForeground(new java.awt.Color(0, 0, 153));
+        SaliryGuardar.setText("Salir");
+        SaliryGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaliryGuardarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(SaliryGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 20, -1, -1));
+
+        jLabel3.setBackground(new java.awt.Color(153, 255, 204));
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/fondo5.png"))); // NOI18N
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 440));
+        jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 10, -1, -1));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 440));
 
@@ -237,7 +257,7 @@ public class Interfaz extends javax.swing.JFrame {
 
                 Resumen nuevoResumen = new Resumen(titulo, autores, resumenCuerpo, palabrasClaves);
 
-                boolean guardado = tabla.AgregarElem(nuevoResumen);
+                boolean guardado = repositorio.AgregarElem(nuevoResumen);
                 
                 if (guardado) {
                     if (palabrasClaves != null && !palabrasClaves.isEmpty()) {
@@ -253,6 +273,7 @@ public class Interfaz extends javax.swing.JFrame {
         for (String frase : listaFrases) {
             
             String fraseOriginal = frase.trim(); 
+            String claveHash = fraseOriginal.toLowerCase();
 
             String fraseParaBuscar = fraseOriginal.toLowerCase().replaceAll("[^a-z0-9#\\+]", "");
             
@@ -273,12 +294,12 @@ public class Interfaz extends javax.swing.JFrame {
                     arbolAVL.insertarOActualizar(fraseOriginal, titulo);
                     arbolAVL.fijarFrecuenciaEnCero(fraseOriginal, titulo);
                 }
-                Object resultadoHash = tablaPalabrasClave.buscar(fraseOriginal);
+                Object resultadoHash = tablaPalabrasClave.buscar(claveHash);
     ListaEnlazada listaAsociada;
 
     if (resultadoHash == null) {
         listaAsociada = new ListaEnlazada();
-        tablaPalabrasClave.insertar(fraseOriginal, listaAsociada);
+        tablaPalabrasClave.insertar(claveHash, listaAsociada);
     } else {
         listaAsociada = (ListaEnlazada) resultadoHash;
     }
@@ -322,7 +343,7 @@ public class Interfaz extends javax.swing.JFrame {
      * * @param evt El evento de acción.
      */
     private void btnAnalizar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizar1ActionPerformed
-String[] titulos = tabla.obtenerTitulos();
+String[] titulos = repositorio.obtenerTitulos();
     
     if (titulos.length == 0) {
         javax.swing.JOptionPane.showMessageDialog(this, "No hay investigaciones guardadas");
@@ -361,8 +382,10 @@ String[] titulos = tabla.obtenerTitulos();
     if (palabraBuscada == null || palabraBuscada.trim().isEmpty()) return;
 
     palabraBuscada = palabraBuscada.trim();
+    String claveEstandarizada = palabraBuscada.toLowerCase();
+    
+    Object resultado = tablaPalabrasClave.buscar(claveEstandarizada);////////////
 
-    Object resultado = tablaPalabrasClave.buscar(palabraBuscada);
 
     if (resultado != null) {
         ListaEnlazada listaTitulos = (ListaEnlazada) resultado;
@@ -516,6 +539,37 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
         javax.swing.JOptionPane.showMessageDialog(this, "Error: No se encontraron investigaciones para este autor.");
     }
     }//GEN-LAST:event_btnBuscarAutorActionPerformed
+/**
+ * Guarda los archivos agregados de resumenes y cierra el programa
+ * Guarda los datos en el archivo si es exitoso termina 
+ * Muestra un mensaje de error si la operación de guardado falla
+ * @param evt El evento de acción que ocasiona el metodo (clic en el botón "Salir").
+ */
+    private void SaliryGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaliryGuardarActionPerformed
+    if (this.repositorio != null) {
+        boolean guardadoExitoso = this.repositorio.guardarTabla(ARCHIVO_REPOSITORIO);
+
+        if (guardadoExitoso) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Datos guardados exitosamente. Saliendo del sistema.", 
+                "Guardado Completo", 
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+             System.exit(0); 
+            
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "ERROR: No se pudieron guardar los datos. Revise los permisos del archivo.", 
+                "Error de Guardado", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "La tabla de datos no fue inicializada. Saliendo sin guardar.", 
+            "Advertencia", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        System.exit(0);
+    }    
+    }//GEN-LAST:event_SaliryGuardarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -561,7 +615,7 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
     private void DetallesResumen(String tituloBuscado) {
     if (tituloBuscado == null) return;
 
-    Resumen resumen = tabla.BuscarElem(tituloBuscado);
+    Resumen resumen = repositorio.BuscarElem(tituloBuscado);
     
     if (resumen != null) {
         StringBuilder sb = new StringBuilder();
@@ -667,8 +721,77 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
 
     javax.swing.JOptionPane.showMessageDialog(this, sb.toString(), "Detalles de Palabra", javax.swing.JOptionPane.INFORMATION_MESSAGE);
 }
+   /**
+ * Itera sobre todos los resúmenes cargados en el repositorio principal 
+ * y reconstruye los índices de búsqueda (árboles AVL y tabla Hash de palabras clave).
+ */
+private void reconstruirIndices() {
+    String[] titulos = this.repositorio.obtenerTitulos(); 
+    
+    if (titulos == null) return;
+    
+    for (String titulo : titulos) {
+        Resumen resumen = this.repositorio.BuscarElem(titulo);
+        if (resumen != null) {
+         
+            String palabrasClaves = resumen.getPclaves();
+            if (palabrasClaves != null && !palabrasClaves.isEmpty()) {
+
+                if (palabrasClaves.endsWith(".")) {
+                    palabrasClaves = palabrasClaves.substring(0, palabrasClaves.length() - 1);
+                }
+                String[] listaFrases = palabrasClaves.split(",");
+
+                for (String frase : listaFrases) {
+                    String fraseOriginal = frase.trim();
+       
+                    String claveHash = fraseOriginal.toLowerCase(); 
+                    
+                    if (!fraseOriginal.isEmpty()) {
+                 
+                        int contador = contarFrecuencia(resumen.getResumen(), fraseOriginal); 
+
+                        if (contador > 0) {
+                            for (int i = 0; i < contador; i++) {
+                                arbolAVL.insertarOActualizar(fraseOriginal, titulo);
+                            }
+                        } else {
+                            arbolAVL.insertarOActualizar(fraseOriginal, titulo);
+                            arbolAVL.fijarFrecuenciaEnCero(fraseOriginal, titulo);
+                        }
+                        Object resultadoHash = tablaPalabrasClave.buscar(claveHash); 
+                        ListaEnlazada listaAsociada;
+
+                        if (resultadoHash == null) {
+                            listaAsociada = new ListaEnlazada();
+                            tablaPalabrasClave.insertar(claveHash, listaAsociada); 
+                        } else {
+                            listaAsociada = (ListaEnlazada) resultadoHash;
+                        }
+
+                        if (!listaAsociada.buscar(titulo)) {
+                            listaAsociada.agregar(titulo);
+                        }
+                    }
+                }
+            }
+            String autores = resumen.getAutores();
+            if (autores != null && !autores.isEmpty()) {
+                String[] listaAutores = autores.split("\n");
+                for (String nombreAutor : listaAutores) {
+                    String nombreLimpio = normalizarNombre(nombreAutor); 
+                    if (nombreLimpio.length() > 0) {
+                        arbolAVLa.insertarAutor(nombreLimpio, titulo);
+                    }
+                }
+            }
+        }
+    }
+}
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton SaliryGuardar;
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnAnalizar1;
     private javax.swing.JButton btnBuscarAutor;
@@ -679,6 +802,7 @@ ListaEnlazada listaDeNodos = arbolAVL.obtenerListaOrdenada();
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;

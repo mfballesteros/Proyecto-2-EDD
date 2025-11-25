@@ -3,13 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package proyecto.pkg2.edd;
+import java.io.Serializable;
 
 /** Resumen de Artículo Científico
  * Representa la información clave de un artículo científico (Título, Autores, Resumen y Palabras Clave).
  * Esta clase se utiliza como el valor principal almacenado en la Tabla Hash, siendo el Título su identificador clave.
  * @author danie_xe5djpj
  */
-public class Resumen { //ESTE SERA EL VALOR DEL KEY VALUE EN HASHTABLE
+public class Resumen implements Serializable{ //ESTE SERA EL VALOR DEL KEY VALUE EN HASHTABLE
     private String titulo;
     private String autores;
     private String resumen;
