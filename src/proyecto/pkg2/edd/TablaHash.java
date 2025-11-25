@@ -3,7 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package proyecto.pkg2.edd;
-
+import java.io.Serializable;
+import java.io.*;
 /**
  *Clase en la que se crea la tabla Hash, crea la tabla como un arreglo de listas 
  * Usa como valor a la clase Resumen
@@ -13,7 +14,7 @@ package proyecto.pkg2.edd;
  * @author danie_xe5djpj
  */
 // ATRIBUTOS DE LA CLASE
-public class TablaHash {
+public class TablaHash implements Serializable{
     private ListaEnlazada[] tabla; //cada posicion del array es una lista
     private int capacidad;
     private int tamaño;
@@ -195,11 +196,7 @@ public class TablaHash {
     
     public void insertar(String clave, Object valor) {
     int indice = obtenerHashString(clave);
-    
-    // Envolvemos los datos en la clase Entrada para no perder la clave
     Entrada nuevaEntrada = new Entrada(clave, valor);
-    
-    // Usamos tu método existente .agregar() de la lista enlazada
     tabla[indice].agregar(nuevaEntrada);
     }
 
@@ -212,19 +209,13 @@ public class TablaHash {
     
     public Object buscar(String claveBuscada) {
     int indice = obtenerHashString(claveBuscada);
-    
-    // Obtenemos la cabeza de la lista en esa posición
     NodoLista actual = tabla[indice].getCabeza();
-
-    // Recorremos la lista por si hubo colisiones
     while (actual != null) {
         Object dato = actual.getDato();
-        
-        // Verificamos si lo que hay ahí es una de nuestras Entradas
         if (dato instanceof Entrada) {
             Entrada e = (Entrada) dato;
             if (e.clave.equalsIgnoreCase(claveBuscada)) {
-                return e.valor; // devolver lista
+                return e.valor; 
             }
         }
         actual = actual.getSig();
@@ -232,7 +223,56 @@ public class TablaHash {
     return null;
     }
     
+ /**
+     * Guarda el estado actual de la tabla Hash, los archivos contenidos
+     * * Implementada en la interfaz 
+     * @param nombreArchivo El nombre del archivo donde se serializará la tabla 
+     * @return true si el guardado fue exitoso
+     */ 
+    
+    public boolean guardarTabla(String nombreArchivo) {
+        try {
+            FileOutputStream archivo = new FileOutputStream(nombreArchivo);
+            ObjectOutputStream salida = new ObjectOutputStream(archivo);
+            salida.writeObject(this);
+            salida.close();
+            archivo.close();
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error al guardar la tabla: " + e.getMessage());
+            return false;
+        }
+    }
+/**
+     * Carga una Tabla Hash previamente guardada (serializada) desde un archivo
+     * @param nombreArchivo El nombre del archivo serializado a cargar 
+     * @param capacidad La capacidad inicial a usar si se debe crear una nueva tabla vacia
+     * @return Tabla Hash cargada desde el archivo
+     */
+    
+    public static TablaHash cargarTabla(String nombreArchivo, int capacidad) {
+    try {
+        FileInputStream archivo = new FileInputStream(nombreArchivo);
+        ObjectInputStream entrada = new ObjectInputStream(archivo);
+        TablaHash tablaCargada = (TablaHash) entrada.readObject();
+        entrada.close();
+        archivo.close();
+        System.out.println("Tabla hash cargada exitosamente desde el archivo.");
+        return tablaCargada;
+    } catch (FileNotFoundException e) {
+        System.out.println("Archivo de repositorio no encontrado. Creando nueva tabla...");
+        return new TablaHash(capacidad);
+    } catch (IOException | ClassNotFoundException e) {
+        System.err.println("Error al cargar la tabla. Creando nueva tabla: " + e.getMessage());
+        return new TablaHash(capacidad);
+    }
 }
+}
+    
+ 
+    
+    
+
     
     
     

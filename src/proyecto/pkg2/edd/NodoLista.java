@@ -1,5 +1,5 @@
 package proyecto.pkg2.edd;
-
+import java.io.Serializable;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -11,7 +11,7 @@ package proyecto.pkg2.edd;
  *
  * @author bettinacarnevali
  */
-public class NodoLista {
+public class NodoLista implements Serializable {
     private Object dato;
     private NodoLista sig;
 

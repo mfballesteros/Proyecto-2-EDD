@@ -3,14 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package proyecto.pkg2.edd;
-
+import java.io.Serializable;
 /** Lista simplemente enlazada
  * Guarda y maneja objetos a través de nodos simplemente enlazados
  * Utilizada para manejar colecciones de títulos o datos de frecuencia
  *
  * @author bettinacarnevali
  */
-public class ListaEnlazada {
+public class ListaEnlazada implements Serializable {
     private NodoLista cabeza;
     private int tamano;
 
