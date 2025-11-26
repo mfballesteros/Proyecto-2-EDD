@@ -157,4 +157,28 @@ public class ListaEnlazada implements Serializable {
     }
     return sb.toString();
 }
+    
+    
+    public String[] toArrayString() {
+        String[] arregloResultado = new String[this.tamano];
+        NodoLista actual = this.cabeza;
+        int indice = 0;
+
+        while (actual != null) {
+
+            Object datoBruto = actual.getDato();
+            
+            if (datoBruto != null) {
+
+                arregloResultado[indice] = datoBruto.toString(); 
+            } else {
+                arregloResultado[indice] = ""; 
+            }
+
+            actual = actual.getSig();
+            indice++;
+        }
+        
+        return arregloResultado;
+    }
 }
