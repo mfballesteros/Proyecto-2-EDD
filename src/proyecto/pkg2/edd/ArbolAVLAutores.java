@@ -4,8 +4,6 @@
  */
 package proyecto.pkg2.edd;
 
-import java.util.ArrayList;
-
 /** Implementacion de arbol AVL que guarda y maneja los autores de las investigaciones
  *Cada nodo almacena el nombre del autor, si existe se agrega a una lista 
  * Este arbol se mantiene balanceado automaticamente
@@ -123,17 +121,17 @@ if (nombre != null) {
         
     
     public String[] obtenerAutoresOrdenados() {
-        ArrayList<String> listaNombres = new ArrayList<>();
+        ListaEnlazada listaNombres = new ListaEnlazada();
         inOrderRec(raiz, listaNombres);
         
         // Convertimos el ArrayList a un arreglo de Strings simple para el JComboBox
-        return listaNombres.toArray(new String[0]);
+        return listaNombres.toArrayString();
     }
 
-    private void inOrderRec(AutorNodo nodo, ArrayList<String> lista) {
+    private void inOrderRec(AutorNodo nodo,ListaEnlazada lista) {
         if (nodo != null) {
             inOrderRec(nodo.getHijoIzquierdo(), lista);
-            lista.add(nodo.getNombreAutor()); // Visita la raíz (guarda nombre)
+            lista.agregar(nodo.getNombreAutor()); // Visita la raíz (guarda nombre)
             inOrderRec(nodo.getHijoDerecho(), lista);
         }
     }

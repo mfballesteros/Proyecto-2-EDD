@@ -140,7 +140,7 @@ public class TablaHash implements Serializable{
      */
     
     public String[] obtenerTitulos() {
-        java.util.ArrayList<String> listaTitulos = new java.util.ArrayList<>();
+        ListaEnlazada listaTitulos = new ListaEnlazada();
 
         for (int i = 0; i < this.capacidad; i++) {
             NodoLista actual = this.tabla[i].getCabeza(); 
@@ -148,12 +148,12 @@ public class TablaHash implements Serializable{
             while (actual != null) {
              
                 Resumen r = (Resumen) actual.getDato(); 
-                listaTitulos.add(r.getTitulo());
+                listaTitulos.agregar(r.getTitulo());
                 
                 actual = actual.getSig(); 
             }
         }
-        return listaTitulos.toArray(new String[0]);
+        return listaTitulos.toArrayString();
     }
     
 /**
